@@ -1,0 +1,19 @@
+﻿  Source.cpp
+c:\users\in3labs\source\repos\project1\project1\source.cpp(294): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(308): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(316): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(324): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(331): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(340): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(347): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(355): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(366): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(374): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(381): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(606): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(607): warning C4244: '+=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(611): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(612): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(614): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\in3labs\source\repos\project1\project1\source.cpp(615): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Project1.vcxproj -> C:\Users\IN3LABS\source\repos\Project1\Debug\Project1.exe
