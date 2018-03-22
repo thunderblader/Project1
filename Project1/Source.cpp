@@ -310,7 +310,11 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 		{
 			if (checkCollision(mCollider, player1))
 			{
-				if (mid_y <= player1.y)
+				if (mCollider.x + mCollider.w >= player1.x)
+				{
+					dot.player_1_vel = 0;
+				}
+				else if (mid_y <= player1.y)
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -377,7 +381,7 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 						mVelY = 3 * speed_value;
 					std::cout << 45 << std::endl;
 				}
-				else if ((mid_y >= player1.y + player1.h))
+				else if ((mid_y <= player1.y + player1.h))
 				{//30
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -391,7 +395,7 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 						mVelY = 4 * speed_value;
 					std::cout << 301 << std::endl;
 				}
-				else
+				else if ((mid_y >= player1.y + player1.h))
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -408,7 +412,11 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 			}
 			if (checkCollision(mCollider, player2))
 			{
-				if (mid_y <= player2.y)
+				if (mCollider.x + mCollider.w >= player2.x)
+				{
+					dot.player_2_vel = 0;
+				}
+				else if (mid_y <= player2.y)
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -475,7 +483,7 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 						mVelY = 3 * speed_value;
 					std::cout << 45 << std::endl;
 				}
-				else if ((mid_y >= player2.y + player2.h))
+				else if ((mid_y <= player2.y + player2.h))
 				{//30
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -489,7 +497,7 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 						mVelY = 4 * speed_value;
 					std::cout << 301 << std::endl;
 				}
-				else
+				else if ((mid_y >= player2.y + player2.h))
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
@@ -828,8 +836,6 @@ int main(int argc, char* args[])
 			//Main loop flag
 			bool quit = false;
 
-			//SDL_Surface *s = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
-
 			//Event handler
 			SDL_Event e;
 
@@ -853,8 +859,6 @@ int main(int argc, char* args[])
 			dot.The_Ball.y = dot.player_1.y + (dot.player_1.h / 2) - 10;
 			dot.The_Ball.w = 20;
 			dot.The_Ball.h = 20;
-			
-			//SDL_FillRect(s, dot.player_1, );
 
 			//While application is running
 			while (!quit)
