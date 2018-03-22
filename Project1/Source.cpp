@@ -26,9 +26,6 @@ public:
 	//Deallocates texture
 	void free();
 
-	//Set color modulation
-	//void setColor(Uint8 red, Uint8 green, Uint8 blue);
-
 	//Creates image from font string
 	bool loadFromRenderedText(std::string textureText, SDL_Color textColor);
 
@@ -45,7 +42,7 @@ private:
 	int mWidth;
 	int mHeight;
 };
-SDL_Rect hii;
+
 //The dot that will move around on the screen
 class Dot
 {
@@ -71,7 +68,7 @@ public:
 
 	SDL_Rect player_1;
 	SDL_Rect player_2;
-	SDL_Rect The_Text;
+	SDL_Rect The_Line;
 	SDL_Rect The_Ball;
 
 	int text_x, text_y;
@@ -81,6 +78,7 @@ public:
 	int player_1_score, player_2_score;
 
 	bool play_start;
+	bool turn;
 
 	//The X and Y offsets of the dot
 	int mPosX, mPosY;
@@ -106,11 +104,15 @@ void close();
 //Box collision detector
 bool checkCollision(SDL_Rect a, SDL_Rect b);
 
+void reset_level();
+
 //The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
+
+SDL_Color textColor = { 0, 0, 0 };
 
 //Scene textures
 LTexture gDotTexture;
@@ -247,8 +249,11 @@ Dot::Dot()
 	player_1_score = 0;
 	player_2_score = 0;
 
-	play_start = false;
+	text_x = 200;
+	text_y = 50;
 
+	play_start = false;
+	turn = false;
 }
 
 void Dot::handleEvent(SDL_Event& e)
@@ -270,8 +275,10 @@ void Dot::handleEvent(SDL_Event& e)
 	//If a key was released
 	else if (e.type == SDL_KEYUP && e.key.repeat == 0)
 	{
-		player_1_vel = 0;
-		player_2_vel = 0;
+		if (e.key.keysym.sym == SDLK_w || e.key.keysym.sym == SDLK_s)
+			player_1_vel = 0;
+		if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_DOWN)
+			player_2_vel = 0;
 	}
 	if (e.key.keysym.sym == SDLK_SPACE)
 	{
@@ -297,76 +304,227 @@ void Dot::move(SDL_Rect& player1, SDL_Rect& player2)
 	//If the dot collided or went too far to the left or right
 	if ((mPosX < 0) || (mPosX + DOT_WIDTH > SCREEN_WIDTH) || checkCollision(mCollider, player1) || checkCollision(mCollider, player2))
 	{
+		int mid_y = mCollider.y + (mCollider.h / 2);
+		float speed_value = (((Master_Vel + Master_Vel) / 2) / 3);
 		if (checkCollision(mCollider, player1) || checkCollision(mCollider, player2))
 		{
-			int mid_y = mCollider.y + mCollider.h;
-			float sqrt_value = (((Master_Vel + Master_Vel) / 2) / 3);
 			if (checkCollision(mCollider, player1))
 			{
 				if (mid_y <= player1.y)
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = sqrt_value;
-					mVelY = 5 * sqrt_value;
+					if(mVelX <=0)
+						mVelX = -speed_value;
+					else
+						mVelX = speed_value;
+					if (mVelY <= 0)
+						mVelY = 5 * -speed_value;
+					else
+						mVelY = 5 * speed_value;
 					std::cout << 15 << std::endl;
 				}
-				else if (mid_y <= player1.y + (0.15 * player1.h))
+				else if ((mid_y <= player1.y + (0.15 * player1.h)))
 				{//30
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = 2 * sqrt_value;
-					mVelY = 4 * sqrt_value;
+					if (mVelX <= 0)
+						mVelX = 2 * speed_value;
+					else
+						mVelX = 2 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 4 * -speed_value;
+					else
+						mVelY = 4 * speed_value;
 					std::cout << 30 << std::endl;
 				}
-				else if (mid_y <= player1.y + (0.45 * player1.h))
+				else if ((mid_y <= player1.y + (0.45 * player1.h)))
 				{//45
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = -mVelX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 3 * -speed_value;
+					else
+						mVelY = 3 * speed_value;
 					std::cout << 45 << std::endl;
 				}
-				else if (mid_y <= player1.y + (0.55 * player1.h))
+				else if ((mid_y <= player1.y + (0.55 * player1.h)))
 				{//90
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = 3 * sqrt_value;
-					//mVelX = -mVelX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
 					mVelY = 0;
 					std::cout << 90 << std::endl;
 				}
-				else if (mid_y <= player1.y + (0.85 * player1.h))
+				else if ((mid_y <= player1.y + (0.85 * player1.h)))
 				{//45
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = -mVelX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 3 * -speed_value;
+					else
+						mVelY = 3 * speed_value;
 					std::cout << 45 << std::endl;
 				}
-				else if (mid_y >= player1.y + player1.h)
+				else if ((mid_y >= player1.y + player1.h))
 				{//30
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = 2 * sqrt_value;
-					mVelY = 4 * sqrt_value;
+					if (mVelX <= 0)
+						mVelX = 2 * speed_value;
+					else
+						mVelX = 2 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 4 * -speed_value;
+					else
+						mVelY = 4 * speed_value;
 					std::cout << 301 << std::endl;
 				}
 				else
 				{//15
 					mPosX -= mVelX;
 					mCollider.x = mPosX;
-					mVelX = sqrt_value;
-					mVelY = 5 * sqrt_value;
+					if (mVelX <= 0)
+						mVelX = speed_value;
+					else
+						mVelX = -speed_value;
+					if (mVelY <= 0)
+						mVelY = 5 * -speed_value;
+					else
+						mVelY = 5 * speed_value;
 					std::cout << 15 << std::endl;
 				}
 			}
+			if (checkCollision(mCollider, player2))
+			{
+				if (mid_y <= player2.y)
+				{//15
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = speed_value;
+					else
+						mVelX = -speed_value;
+					if (mVelY <= 0)
+						mVelY = 5 * -speed_value;
+					else
+						mVelY = 5 * speed_value;
+					std::cout << 15 << std::endl;
+				}
+				else if ((mid_y <= player2.y + (0.15 * player2.h)))
+				{//30
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = 2 * speed_value;
+					else
+						mVelX = 2 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 4 * -speed_value;
+					else
+						mVelY = 4 * speed_value;
+					std::cout << 30 << std::endl;
+				}
+				else if ((mid_y <= player2.y + (0.45 * player2.h)))
+				{//45
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 3 * -speed_value;
+					else
+						mVelY = 3 * speed_value;
+					std::cout << 45 << std::endl;
+				}
+				else if ((mid_y <= player2.y + (0.55 * player2.h)))
+				{//90
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
+					mVelY = 0;
+					std::cout << 90 << std::endl;
+				}
+				else if ((mid_y <= player2.y + (0.85 * player2.h)))
+				{//45
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = 3 * speed_value;
+					else
+						mVelX = 3 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 3 * -speed_value;
+					else
+						mVelY = 3 * speed_value;
+					std::cout << 45 << std::endl;
+				}
+				else if ((mid_y >= player2.y + player2.h))
+				{//30
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = 2 * speed_value;
+					else
+						mVelX = 2 * -speed_value;
+					if (mVelY <= 0)
+						mVelY = 4 * -speed_value;
+					else
+						mVelY = 4 * speed_value;
+					std::cout << 301 << std::endl;
+				}
+				else
+				{//15
+					mPosX -= mVelX;
+					mCollider.x = mPosX;
+					if (mVelX <= 0)
+						mVelX = speed_value;
+					else
+						mVelX = -speed_value;
+					if (mVelY <= 0)
+						mVelY = 5 * -speed_value;
+					else
+						mVelY = 5 * speed_value;
+					std::cout << 15 << std::endl;
+				}
+			}
+			Master_Vel += 0.05;
 		}
-		else
+		else if ((mPosX < 0))
 		{
 			//Move back
 			mPosX -= mVelX;
 			mCollider.x = mPosX;
 			mVelX = -mVelX;
-			std::cout << "the wall" << std::endl;
+			player_2_score++;
+			reset_level();
+			std::cout << "the left wall" << std::endl;
+		}
+		else if((mPosX + DOT_WIDTH > SCREEN_WIDTH))
+		{
+			//Move back
+			mPosX -= mVelX;
+			mCollider.x = mPosX;
+			mVelX = -mVelX;
+			player_1_score++;
+			reset_level();
+			std::cout << "the right wall" << std::endl;
 		}
 	}
 
@@ -388,25 +546,6 @@ void Dot::render()
 {
 	//Show the dot
 	gTextTexture.render(text_x, text_y);
-	//gDotTexture.render(mPosX, mPosY);
-}
-
-void get_text_and_rect(SDL_Renderer *renderer, int x, int y, char *text, TTF_Font *font, SDL_Texture **texture, SDL_Rect rect)
-{
-	int text_width;
-	int text_height;
-	
-	SDL_Color textColor = { 0, 0, 0, 0 };
-
-	SDL_Surface *surface = TTF_RenderText_Solid(font, text, textColor);
-	*texture = SDL_CreateTextureFromSurface(renderer, surface);
-	text_width = surface->w;
-	text_height = surface->h;
-	SDL_FreeSurface(surface);
-	rect.x = x;
-	rect.y = y;
-	rect.w = text_width;
-	rect.h = text_height;
 }
 
 bool LTexture::loadFromRenderedText(std::string textureText, SDL_Color textColor)
@@ -509,7 +648,7 @@ bool loadMedia()
 		success = false;
 	}
 	//Open the font
-	font = TTF_OpenFont("C:/Users/IN3LABS/source/repos/Project1/Debug/Xenophobia.ttf", 28);
+	font = TTF_OpenFont("C:/Users/IN3LABS/source/repos/Project1/Debug/AbhayaLibre.ttf", 50);
 	if (font == NULL)
 	{
 		printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
@@ -518,8 +657,7 @@ bool loadMedia()
 	else
 	{
 		//Render text
-		SDL_Color textColor = { 0, 0, 0 };
-		if (!gTextTexture.loadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor))
+		if (!gTextTexture.loadFromRenderedText("Player 1: " + dot.player_1_score, textColor))
 		{
 			printf("Failed to render text texture!\n");
 			success = false;
@@ -590,6 +728,28 @@ bool checkCollision(SDL_Rect a, SDL_Rect b)
 	return true;
 }
 
+void reset_level()
+{
+	dot.player_1.y = 250;
+	dot.player_2.y = 250;
+	dot.player_1_vel = 0;
+	dot.player_2_vel = 0;
+
+	if (dot.turn = false)
+	{
+		dot.mPosX = dot.player_1.x + dot.player_1.w;
+		dot.mPosY = dot.player_1.y + (dot.player_1.h / 2) - 10;
+		dot.turn = true;
+	}
+	else
+	{
+		dot.mPosX = dot.player_2.x - dot.The_Ball.w;
+		dot.mPosY = dot.player_2.y + (dot.player_2.h / 2) - 10;
+		dot.turn = false;
+	}
+	dot.play_start = false;
+}
+
 void update()
 {
 	dot.move(dot.player_1, dot.player_2);
@@ -615,11 +775,9 @@ void update()
 		dot.mPosY = dot_y;
 	}
 
-	const char * hi = "LOL";
-
 	
-
-	//get_text_and_rect(gRenderer, 0, 0, const_cast<char*>(hi), font, &mTexture, dot.The_Text);
+	gTextTexture.free();
+	gTextTexture.loadFromRenderedText(std::to_string(dot.player_1_score) + "                                   " + std::to_string(dot.player_2_score), textColor);
 
 	dot.The_Ball.x = dot.mPosX;
 	dot.The_Ball.y = dot.mPosY;
@@ -639,7 +797,7 @@ void render()
 	SDL_RenderDrawRect(gRenderer, &dot.player_2);
 
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
-	SDL_RenderDrawRect(gRenderer, &dot.The_Text);
+	SDL_RenderDrawRect(gRenderer, &dot.The_Line);
 
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_RenderDrawRect(gRenderer, &dot.The_Ball);
@@ -670,6 +828,8 @@ int main(int argc, char* args[])
 			//Main loop flag
 			bool quit = false;
 
+			//SDL_Surface *s = SDL_CreateRGBSurface(0, width, height, 32, 0, 0, 0, 0);
+
 			//Event handler
 			SDL_Event e;
 
@@ -684,19 +844,17 @@ int main(int argc, char* args[])
 			dot.player_2.w = 20;
 			dot.player_2.h = 80;
 
-			dot.text_x = 100;
-			dot.text_y = 50;
+			dot.The_Line.x = SCREEN_WIDTH / 2;
+			dot.The_Line.y = 0;
+			dot.The_Line.w = 0;
+			dot.The_Line.h = SCREEN_HEIGHT;
 
-			dot.The_Text.x = dot.text_x;
-			dot.The_Text.y = dot.text_y;
-			dot.The_Text.w = 80;
-			dot.The_Text.h = 20;
-
-			dot.The_Ball.x = dot.player_1.x;
-			dot.The_Ball.y = dot.player_1.y;
+			dot.The_Ball.x = dot.player_1.x + dot.player_1.w;
+			dot.The_Ball.y = dot.player_1.y + (dot.player_1.h / 2) - 10;
 			dot.The_Ball.w = 20;
 			dot.The_Ball.h = 20;
 			
+			//SDL_FillRect(s, dot.player_1, );
 
 			//While application is running
 			while (!quit)
@@ -713,11 +871,6 @@ int main(int argc, char* args[])
 					//Handle input for the dot
 					dot.handleEvent(e);
 				}
-
-				//Move the dot and check collision
-				
-				//wall.move(player_1);
-				//player_1.x += dot.player_vel;
 				
 				update();
 				render();
